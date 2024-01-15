@@ -14,7 +14,7 @@ return [
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
     */
-
+    // 'paths' => [],
     // 'paths' => ['api/*', 'sanctum/csrf-cookie'],
     'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'register', 'logout'],
     // 'paths' => ['*'],
