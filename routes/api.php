@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,4 +26,10 @@ Route::get('/test', function() {
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::prefix('/auth')->group(function() {
+    Route::post('/register', [RegisterController::class, 'registerUser']);
+    Route::post('/login', [LoginController::class, 'loginUser']);
+    Route::middleware('auth:sanctum')->get('/logout', [LogoutController::class, 'logoutUser']);
 });
