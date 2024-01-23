@@ -34,7 +34,7 @@ class RegisterController extends Controller
 
         return response()->json([
             'message' => 'El usuario se ha creado',
-            'token' => $user->createToken("API ACCESS TOKEN")->plainTextToken
+            'token' => $user->createToken("API ACCESS TOKEN", ['regular'])->plainTextToken
         ], 200);   
     }
 }

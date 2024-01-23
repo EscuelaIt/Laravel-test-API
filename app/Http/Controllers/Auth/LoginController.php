@@ -31,11 +31,14 @@ class LoginController extends Controller
         }
 
         $user = Auth::user();
+        
+        $ability = $user->is_premium ? 'premium' : 'regular';
+
         //$user = User::where('email', $request->email)->first();
 
         return response()->json([
             'message' => 'Login correcto',
-            'token' => $user->createToken("API ACCESS TOKEN")->plainTextToken
+            'token' => $user->createToken("API ACCESS TOKEN", [$ability])->plainTextToken
         ], 200);
     }
 }

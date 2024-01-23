@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -33,3 +34,6 @@ Route::prefix('/auth')->group(function() {
     Route::post('/login', [LoginController::class, 'loginUser']);
     Route::middleware('auth:sanctum')->get('/logout', [LogoutController::class, 'logoutUser']);
 });
+
+Route::middleware('auth:sanctum','ability:premium')->get('/premium-access', [PremiumController::class, 'access']);
+Route::middleware('auth:sanctum')->get('/set-premium', [PremiumController::class, 'setPremium']);
