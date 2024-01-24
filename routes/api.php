@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PremiumController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -37,3 +38,5 @@ Route::prefix('/auth')->group(function() {
 
 Route::middleware('auth:sanctum','ability:premium')->get('/premium-access', [PremiumController::class, 'access']);
 Route::middleware('auth:sanctum')->get('/set-premium', [PremiumController::class, 'setPremium']);
+
+Route::middleware('auth:sanctum')->apiResource('/categories', CategoryController::class);
