@@ -10,6 +10,18 @@ class Category extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['user_id', 'name'];
+
+    protected $hidden = [
+        'updated_at',
+    ];
+
+    protected $appends = ['date'];
+
+    public function getDateAttribute() {
+        return $this->created_at->format('Y-m-d');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
