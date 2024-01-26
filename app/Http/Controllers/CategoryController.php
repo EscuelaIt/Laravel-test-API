@@ -50,8 +50,12 @@ class CategoryController extends Controller
         }
 
         // si estoy aki es que no hubo errores de validación
-        $category = Category::create([
-            'user_id' => $user->id,
+        // $category = Category::create([
+        //     'user_id' => $user->id,
+        //     'name' => $request->name,
+        // ]);
+
+        $category = $user->categories()->create([
             'name' => $request->name,
         ]);
 
