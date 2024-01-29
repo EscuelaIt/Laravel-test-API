@@ -49,4 +49,18 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Category::class);
     }
+
+    public function customers(): HasMany
+    {
+        return $this->hasMany(Customer::class);
+    }
+
+    public function intervals(): HasMany
+    {
+        return $this->hasMany(Interval::class);
+    }
+    
+    public function getHasOpenIntervalAttribute() {
+        return $this->intervals()->whereNull('end_time')->count() > 0;
+    }
 }
