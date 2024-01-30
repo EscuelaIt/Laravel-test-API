@@ -15,17 +15,622 @@
         "version": "0.0"
     },
     "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login de usuarios",
+                "description": "Ruta para realizar el login de un usuario existente. Verifica el usuario y devuelve el token",
+                "operationId": "loginUser",
+                "requestBody": {
+                    "description": "Credenciales de usuario",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret1234"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/AuthResponse"
+                    },
+                    "401": {
+                        "description": "Error de validación de la entrada de datos o usuario desconocido"
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "get": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Cerrar la sesión de un usuario",
+                "description": "Endpoint hacer el logout, que se encarga de desactivar y borrar el token de acceso",
+                "operationId": "logoutUser",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/acceptJsonHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/requestedWith"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deslogueado exitosamente"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Registro de usuarios",
+                "description": "Ruta para realizar el alta de un usuario. Crea el usuario y devuelve el token",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "Objeto de usuario a crear",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/AuthResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationErrorResponse"
+                    }
+                }
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "category"
+                ],
+                "summary": "Obtener la lista de las categorias de un usuario",
+                "description": "Devuelve un array de objetos Category que haya dado de alta un usuario",
+                "operationId": "getUserCategories",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/acceptJsonHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/requestedWith"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorias enviada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Mensaje de respuesta",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Category"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthenticatedResponse"
+                    },
+                    "500": {
+                        "description": "Error de servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "category"
+                ],
+                "summary": "Añadir una categoria",
+                "description": "Crear una categoria en la base de datos asociada a un usuario",
+                "operationId": "createCategory",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/acceptJsonHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/requestedWith"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Objeto de categoria a crear",
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "La categoria se ha creado con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Mensaje de respuesta",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Category"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ValidationErrorResponse"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/NotAuthorizedResponse"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthenticatedResponse"
+                    },
+                    "500": {
+                        "description": "Error de servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categories/{id}": {
+            "get": {
+                "tags": [
+                    "category"
+                ],
+                "summary": "Obtener una categoria concreto",
+                "description": "Obtener un objeto de una categoria que corresponda con un identificador dado",
+                "operationId": "getCategory",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/CategoryIdParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/acceptJsonHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/requestedWith"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Mensaje de respuesta",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Category"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFoundResponse"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/NotAuthorizedResponse"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthenticatedResponse"
+                    },
+                    "500": {
+                        "description": "Error de servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "category"
+                ],
+                "summary": "Actualiza una categoria",
+                "description": "Actualizar una categoria que corresponda con un identificador dado",
+                "operationId": "updateCategory",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/CategoryIdParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/acceptJsonHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/requestedWith"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Datos del categoria a actualizar",
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Mensaje de respuesta",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Category"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ValidationErrorResponse"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFoundResponse"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/NotAuthorizedResponse"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthenticatedResponse"
+                    },
+                    "500": {
+                        "description": "Error de servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "category"
+                ],
+                "summary": "Borrar una categoria",
+                "description": "Borrar una categoria indicado en el identificador de la URL",
+                "operationId": "deleteCategory",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/CategoryIdParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/acceptJsonHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/requestedWith"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "La categoria se ha borrado"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthenticatedResponse"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFoundResponse"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/NotAuthorizedResponse"
+                    },
+                    "500": {
+                        "description": "Error de servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/user": {
             "get": {
                 "tags": [
                     "user"
                 ],
                 "operationId": "a65897868f1d4105404848067624d207",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/acceptJsonHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/requestedWith"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "User Data"
+                        "description": "User Data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/responses/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Category": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único de la categoría. Al crear o actualizar no se usará el identificador",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nombre de la categoría",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "Identificador del usuario dueño. Clave foránea que referencia a la entidad User. Este campo no es necesario indicarlo porque se obtiene del usuario autenticado",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "required": [
+                    "name",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único del usuario. Al crear el usuario no se debe enviar el identificador, pues se generará en la creación.",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nombre del usuario",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del usuario",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "password": {
+                        "description": "Clave del usuario",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "responses": {
+            "NotAuthorizedResponse": {
+                "description": "Respuesta el usuario no está autorizado a realizar esta acción",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "description": "NotAuthorizedResponse",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 }
+            },
+            "NotFoundResponse": {
+                "description": "Respuesta el usuario cuando no existe este recurso",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "description": "NotFoundResponse",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "UnauthenticatedResponse": {
+                "description": "Respuesta cuando el endpoint necesita autenticación y no se ha podio verificar al usuario",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "description": "Unauthenticated",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "ValidationErrorResponse": {
+                "description": "Respuesta cuando se ha encontrado un error de validación",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "description": "Validation error message",
+                                    "type": "string"
+                                },
+                                "errors": {
+                                    "description": "Detalles específicos sobre los errores de validación.",
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "AuthResponse": {
+                "description": "Usuario autenticado, se devuelve el token",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "description": "Mensaje de respuesta",
+                                    "type": "string"
+                                },
+                                "token": {
+                                    "description": "Token de autenticación",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "acceptJsonHeader": {
+                "name": "Accept",
+                "in": "header",
+                "description": "Header to indicate the response format, should be application/json",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "default": "application/json"
+                }
+            },
+            "requestedWith": {
+                "name": "X-Requested-With",
+                "in": "header",
+                "description": "Header to indicate the requested with parameter",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "default": "XMLHttpRequest"
+                }
+            },
+            "CategoryIdParameter": {
+                "name": "id",
+                "in": "path",
+                "description": "ID de la categoria que se desea obtener",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
+            }
+        },
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     }
