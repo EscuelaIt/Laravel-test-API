@@ -43,8 +43,23 @@ class UserRegisterTest extends TestCase
         ]);
 
         $response->assertStatus(422);
-        $response->assertInvalid(['email']);
-        $response->assertValid(['name']);
+        // $response->assertInvalid(['email']);
+        // $response->assertValid(['name']);
+
+        $response
+            ->assertJson([
+                'message' => 'Ha ocurrido un error de validación',
+            ])
+            ->assertJsonStructure([
+                'message',
+                'errors' => [
+                    'email' => [],
+                ],
+            ])
+            ->assertJsonFragment([
+                'email' => ['The email field is required.'],
+            ]);
+
     }
 
 }
