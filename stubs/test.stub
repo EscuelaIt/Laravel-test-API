@@ -1,0 +1,19 @@
+<?php
+
+namespace {{ namespace }};
+
+use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+class {{ class }} extends TestCase
+{
+    #[Test]
+    public function test_example(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+    }
+}
