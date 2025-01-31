@@ -34,6 +34,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
         'email_verified_at',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     /**
@@ -60,7 +62,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Interval::class);
     }
-    
+
     public function getHasOpenIntervalAttribute() {
         return $this->intervals()->whereNull('end_time')->count() > 0;
     }

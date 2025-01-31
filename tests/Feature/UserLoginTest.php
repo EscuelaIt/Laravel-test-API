@@ -38,12 +38,10 @@ class UserLoginTest extends TestCase
     #[Test]
     public function login_attempt_with_invalid_data_do_not_receives_correct_token(): void {
         $password = $this->faker->password();
-        $user = User::factory()->create([
-            'password' => $password,
-        ]);
+        $this->createUser($password);
 
         $response = $this->postJson('/api/auth/login', [
-            'email' => $user->email,
+            'email' => $this->user->email,
             'password' => 'un password que no es válido'
         ]);
 
