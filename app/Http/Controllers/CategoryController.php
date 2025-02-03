@@ -52,12 +52,12 @@ class CategoryController extends Controller
      *  }
      * )
      */
-    
+
     public function index()
     {
         $user = Auth::user();
         return $this->sendSuccess(
-            "Tenemos {$user->categories->count()} categorias", 
+            "Tenemos {$user->categories->count()} categorias",
             $user->categories,
         );
     }
@@ -80,7 +80,7 @@ class CategoryController extends Controller
      *      )
      *  ),
      *  @OA\Response(
-     *      response=200, 
+     *      response=200,
      *      description="La categoria se ha creado con éxito",
      *      @OA\JsonContent(
      *         type="object",
@@ -198,7 +198,7 @@ class CategoryController extends Controller
     public function show(string $id)
     {
         $user = Auth::user();
- 
+
         $category = Category::find($id);
         if(! $category) {
             return $this->sendError('No existe esta categoria', 404);
@@ -355,6 +355,6 @@ class CategoryController extends Controller
 
         $category->delete();
 
-        return $this->sendSuccess('Categoria borrada', null);
+        return $this->sendSuccess('Categoría borrada', null);
     }
 }
