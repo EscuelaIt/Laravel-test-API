@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Project\ProjectStoreController;
+use App\Http\Controllers\Customer\CustomerShowController;
 use App\Http\Controllers\Interval\IntervalOpenController;
 use App\Http\Controllers\Interval\IntervalShowController;
 use App\Http\Controllers\Customer\CustomerStoreController;
@@ -47,6 +48,7 @@ Route::middleware('auth:sanctum')->get('/set-premium', [PremiumController::class
 Route::middleware('auth:sanctum')->apiResource('/categories', CategoryController::class);
 
 Route::middleware('auth:sanctum')->prefix('/customers')->group(function() {
+    Route::get('/{id}', CustomerShowController::class);
     Route::post('/', CustomerStoreController::class);
     Route::put('/{id}', CustomerUpdateController::class);
 });
